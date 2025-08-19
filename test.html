@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ecommerce Prod Ads</title>
+
+
+    <script>
+        function getConsentFromStorage() {
+            const raw = localStorage.getItem("user_consent");
+            try {
+                return raw ? JSON.parse(raw) : null;
+            } catch {
+                return null;
+            }
+        }
+        var adv_target = {
+            "pdv_id": "DIMAR_MERCATO_359HDZ01"
+        };
+        // Imposta la variabile globale adv_consent prima del caricamento framework
+        var adv_consent = (function () {
+            const stored = getConsentFromStorage();
+            if (!stored) return { consensoDato: false }; // Nessuna scelta ancora
+            return {
+                consensoDato: stored.consensoDato,
+                tcString: stored.tcString
+            };
+        })();
+        // Simula una CMP con consenso accettato
+        window.__tcfapi = function (cmd, version, callback) {
+            if (cmd === 'getTCData') {
+                // Simula dati di consenso
+                const tcData = {
+                    tcString: 'TEST_TCSTRING',      // Stringa fittizia TCF
+                    gdprApplies: true,              // GDPR attivo
+                    eventStatus: 'tcloaded',
+                    purposeConsents: {
+                        1: true,  // Scopo 1: essenziale
+                        2: true,  // Scopo 2: personalizzazione / annunci
+                        3: true   // Scopo 3: analytics
+                    }
+                };
+                callback(tcData, true);
+            }
+        };
+
+    </script>
+
+    <script src="../../static/selex-adv-framework-ecommerce_test.js"></script>
+</head>
+
+<body>
+
+    <h1>Ecommerce Test Ad Placements</h1>
+    <h2>Banner Selex /23281620594/ecommerce_test/cosicomodo.it/mercato/homepage/slider_top4 </h2>
+    <div data-adv-path="/23281620594/ecommerce_test/cosicomodo.it/mercato/homepage/slider_top4"></div>
+
+    <style>
+        body.clickio-cmp-in-scope .clickio-cmp-settings-display {
+            display: inherit !important;
+        }
+    </style>
+    <a class="clickio-cmp-settings-text clickio-cmp-settings-display" style="display:none;" href="#">Your Privacy
+        Choices</a>
+
+    <!-- CMP Banner -->
+    <div id="cmp-banner">
+        <p>Usiamo i cookie per offrirti pubblicità personalizzate. Vuoi accettare?</p>
+        <button onclick="handleConsent(true)">Accetta</button>
+        <button onclick="handleConsent(false)">Rifiuta</button>
+    </div>
+
+    <script>
+        function handleConsent(consented) {
+            saveConsentToStorage(consented);
+            document.getElementById("cmp-banner").style.display = "none";
+            location.reload(); // Ricarica per applicare il consenso
+        }
+
+        function saveConsentToStorage(consented) {
+            const consentData = {
+                consensoDato: consented,
+                tcString: consented ? generateFakeTCString() : generateFakeTCString2(),
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem("user_consent", JSON.stringify(consentData));
+            document.cookie = "euconsent-v2=" + consentData.tcString;
+        }
+
+        function generateFakeTCString() {
+            // Questa stringa è un esempio valido, ma statico
+            return "CQR0BoAQR0BoAB7FhBITBrFsAP_AAAAAAAAALNtT_G__bXlr-T736ftkeYxf99h77sQxBgbJk-4FzLvW_JwX32E7NAz6tqYKmRIAu3TBIQNlHJDURVCgaogVrzDMaEyUoTtKJ6BkiFMRY2NYCFxvm4tjeQCY5vr991d9mR-t7dr83dzyy4hnv3a9_-S1WJCdAYetDfv8bBOT-9IO9_x8v4v4_N7pE2-eS1n_tWvp7D9-Ytv_9X399_bbff7Pn_ful_-_X__f_n37v943377__4LFQFAAcADNAM-AjwBKoDtgIKASIAkoBKMCZIFFgKNAUcAqkBVkCsAFcwK-gWKAGCQcQAFwAUABUADgAHgAQAAvgBkAGoAPAAmABVADeAH4AQkAhgCJAEcAJYATQArQBgADDgGUAZYA2QBzwDuAO-AewB8QD7AP0AgABFICLgIxARoBHICRAJLAT8BQYCoAKuAXMAvQBigDRAG0ANwAcQA9oCHYEegSKAnYBQ4CjwFIgKbAWwAuQBdgC7wF5gMNgZGBkgDJwGXAMzAZzA1cDWQGxgNoAbeA3MBuoDkwHLgPHAe0A-MB_wEBAIJgQYAhDBC0EL4Iegh-BH0CRQEkIJMAkyBLMCW4EvgJgQTLBMwCZwE1QJsATcAnMBOkCdwE8IKDgoQBQsCioFJQKXAUyAp4BUACowFSgKnAVdArYBW8CuwFfALCgWOAsqOhDgALgAoACoAHAAQQAuAC-AGQAagA8ACYAFMAKsAXABdADEAG8AP0AhgCJAEcAJYATQAnABRgCtAGAAMMAZQA0QBsgDngHcAd8A9gD4gH2AfsBFAEYgI4AksBPwFBgKiAq4BYgC5wF5AXoAxQBtADcQHEAcYA6gB7QD7AIQAQ6AicBF8CPQJFATIAnYBQ8CjwKQAUnApoCmwFWALFAWwAt0BcAC5IF2AXaAu8BeYC-gGGgMegZGBkgDJwGVQMsAy4BmYDOQGmgNVgauBrADaAG3gN1AcWA5MBy4DxwHtAPjAfWA-4B_YD_gIAgQEAgwBC0CHoEdgI-gSEAkUBJACTIEq4JZgloBLoCXwEwIJlgmYBM4CaoE2AJuATeAnCBOYCdME7QTuAngBPMCgwFCAKFgUSAoqBSUClwFPAKjAVKAqdBVwFXQK2AVvArsBYMCyYFlSED4ABYAFAAXAA1ACqAFwAMQAbwA_ADAAHPAO4A7wCKAEcAJSAUGAqICrgFzAMUAbQA4wB1AEOgInAR6ApOBTQFNgKsAWKAtEBcAC5AF2AMjAZOAzkBqoDxwHxgP7AgIBBgCFoEPQJCASKAkgBLoCZwE2AJzATuAngBPMCgwFFQKSgUuAqUBV8CuwFgiUEsABYAFAAOAA8ACYAFUALgAYoBDAESAI4AUYArQBgADZAHeAPwAjkBUQFXALmAYoA6gB7QEIAIdARMAi-BHoEigKPAUnApoCmwFigLYAXYAvOBkYGSAMnAZYAzkBrADbwHtAPjAgCBAQCB4EGAIQgQ9Aj6BIoCSAElQJVgS6Al9BMsEzAJnATVAm4BOECc0E7QTuAngBPMCioFJQKXAVGAqUBU4CtgFb4LBAsGBYsCypSDaAAuACgAKgAcABBADIANAAeABMACqAGIAP0AhgCJAEcAKMAVoAwABlADRAGyAOcAd8A-wD9AIsARiAjgCSgFBgKiAq4BcwC8gGKANoAbgA4wB1AD2gH2AQ7AiYCJwEXwI9AkUBOwChwFIAKTgU0BTYCrAFigLYAXAAuSBdgF2gLzAX0Aw2BkYGSAMngZYBlwDOYGsAayA28BuoDkwHigPHAe0A-MB_YD_gICAQTAgwBCECFoEMwIcgR2Aj6BIoCSEEmASZAlWBLMCXQEvgJgQTLBMwCZwE1QJsATeAnNBO0E7gJ4ATzAoWBRUCkoFLgKeAVGAqUBU4CtgFbwK7AWCAsKBYsCyYFlSwIEABIAD4AMAAyACKAFQAWQA1ADcAIQARQAkABXADYAH8AUgAwABlgDgAHcARwAooBTQC7AF6AMIAY0AzgBpwDmgHVAPQAfYBAoCDwEegJiATaAneBQ4FEQKaApsBVkCxALIAWcAtEBbAC7AF3AL9AYAAwcBhgDDwGPgMhAZWAzMBn4DQgGjANTAa0A2ABscDagNrAbgA3QBvwDjgHLAOtAdxA7sDvAHfgPCAeOA94B9MEBAQFAguBDACHAEPQIhARNAiiBHICP4EggJOATCAmQBMqCZgJmwTYBNmCbYJugTjAnMBOoCdwE8AJ5AT2gn4CfoE_wKAgURAomBRcCjIFIAKSAUmApcBTaCnAKcgU_AqEBUcCpQFVgKtQVeBV-CsIKxgVmArdBXAFcQLCgWJAsgBZYCzA";
+        }
+
+        function generateFakeTCString2() {
+            return "CQWZXEAQWZXEAB7FoBITB4FgAAAAAAAAAAAAAAAW8gLgA4AGaAZ8BHgCVQHbAPPAgoBGkCRAElAJRgTJAosBRwCqQFWQKwAVzAr6BYoC1YFvABgkHIABcAFAAVAA4AB4AEAAL4AZABqADwAIYATAAqgBvAD8AISAQwBEgCOAE0AK0AYAAw4BlAGWANkAc8A7gDvgHsAfEA-wD9AIAARSAi4CMQEaARyAkQCTQE_AUGAqACrgFzAL0AYoA0QBtADcAHEAPaAh2BHoEigJpATsAocBR4CkQFNgLYAXAAuQBdgC7wF5gMNgZGBkgDJwGXAMzAZzA1cDWQGxgNoAbeA3MBuoDkwHLgPHAfGA_4CAgEEwIMAQhghaCF8EPQQ_Aj6BIqCTAJMgSzAluBL4CYEEywTMAmcBNUCbAE3AJzATpAncBPCCg4KEAULAoqBSUClwFMgKeQU_BUACowFSgKnAVdArYBW8CvgFhQLHAWVgtYC1oFuR0IcABcAFAAVAA4ACCAFwAXwAyADUAHgATAApgBVgC4ALoAYgA3gB-gEMARIAjgBNACcAFGAK0AYAAwwBlADRAGyAOeAdwB3wD2APiAfYB-wEUARiAjgCTQE_AUGAqICrgFiALnAXkBegDFAG0ANxAcQBxgD2gH2AQgAh0BE4CL4EegSKAmQBNICdgFDwKPApABScCmgKbAVYAsUBbAC3QFwALkgXYBdoC7wF5gL6AYaAx6BkYGSAMnAZVAywDLgGZgM5AaaA1WBq4GsANoAbeA3UBxYDkwHLgPHAfGA-sB9wD-wH_AQBAgIBBgCFoEPQI7AR9AkIBIoCTIEq4JZgloBLoCXwEwIJlgmYBM4CaoE2AJuATeAnCBOYCdME7QTuAngBPMCgwFCAKFgUSAoqBSUClwFPAKfgVGAqUBU6CrgKugVsAreBYMCyYFlYLWAtaBbkC3ZCCAAAsACgALgAagBVAC4AGIAN4AfgBgADngHcAd4BFACOAEpAKDAVEBVwC5gGKANoAcYBDoCJwEegJpAUnApoCmwFWALFAWiAuABcgC7AGRgMnAZyA1UB44D4wH9gQEAgwBC0CHoEhAJFAS6AmcBNgCcwE7gJ4ATzAoMBRUCkoFLgKfgVKAq-BYIC1oFuQLdkoJoACwAKAAcAB4AEMAJgAVQAuABigEMARIAjgBRgCtAGAANkAd4A_ACOQFRAVcAuYBigDiAIQAQ6Ai-BHoEigKPAUnApoCmwFigLYAXIAuwBecDIwMkAZOAywBnIDWAG3gPjAgCBAQCB4EGAIQgQ9Aj6BIoCSoEqwJdAS-AmYBM4CaoE2AJuAThAnNBO0E7gJ4ATzAoqBSUClwFRgKlAVOArYBW-CwQLBgWLAsqBZ6C1gLWgW5KQbwAFwAUABUADgAIIAZABoADwAIYATAAqgBiAD9AIYAiQBHACjAFaAMAAZQA0QBsgDnAHfAPsA_QCLAEYgI4AkoBQYCogKuAXMAvIBigDaAG4gOIA4wB7QD7AIdAROAi-BHoEigJpATsAocBSACk4FNAU2AqwBYoC2AFwALkgXYBdoC8wF9AMNgZGBkgDJ4GWAZcAzmBrAGsgNvAbqA5MB4oDxwHxgP7Af8BAQCCYEGAIQgQtAhmBDkCOwEfQJFQSYBJkCVYEswJdAS-AmBBMsEzAJnATVAmwBN4Cc0E7QTuAngBPMChYFFQKSgUuAp4BT8CowFSgKnAVsAreBYICwoFiwLJgWVAs9BawFrQLclgRAAD4AMAAyACKAFQAWQA1ADeAIQAhgBFACQAFcANgAfwBSADAAGWAOAAdwBHACigFNALsAXoAwgBjQDOAGnAOaAdUA9AB9gECgIPAR6AmIBNoCd4FDgURApoCmwFWQLEAsgBZwC0QFsALgAXYAu4BfoDAAGDgMMAYeAx8BkIDKwGZgM_AaFA0UDRgGpgNaAbAA2OBtQG1gNwAboA34BxwDlgHWgO4gd2B3gDvwHhAPHAe8A-mCAgICgQXAhgBDgCHoETQIogRZAjlBH8EggJOASyAmVBMwEzYJsAmzBNsE3QJxgTmAncBPACeQE9oJ-An6BP8CgIFDwKIgUTAouBRkCkAFJAKTAUuAptBTgFOQKfgVCAqOBUoCqwFWoKvAq_BWEFYwKzAVugrgCuIFhQLEgWQAsoBZYCzAFnALPAWjAtPBa0FroLZgtoBbkC3YAAA"
+        }
+
+        // Mostra CMP solo se nessun consenso è stato dato
+        if (!adv_consent.consensoDato) {
+            document.getElementById("cmp-banner").style.display = "block";
+        }
+    </script>
+</body>
+
+</html>
