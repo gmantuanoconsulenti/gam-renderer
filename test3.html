@@ -68,7 +68,6 @@
                 timestamp: new Date().toISOString()
             };
             localStorage.setItem("user_consent", JSON.stringify(consentData));
-            document.cookie = "euconsent-v2=" + consentData.tcString;
         }
 
         function generateFakeTCString() {
