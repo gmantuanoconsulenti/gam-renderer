@@ -29,16 +29,15 @@
                 };
                 localStorage.setItem("user_consent", JSON.stringify(consentData));
             }
+            function saveTcStringToStorage(tcString) {
+                const stored = getConsentFromStorage() || {};
+                stored.tcString = tcString;
+                localStorage.setItem("user_consent", JSON.stringify(stored));
+            }
             var adv_target = {
                 "pdv_id": "DIMAR_MERCATO_203",
                 "sport": "Football"
             };
-            window.__tcfapi('getTCData', 2, (tcData, success) => {
-            if (success) {
-                console.log("TCData:", tcData);
-                console.log(tcData.tcString); // È l’equivalente del valore del cookie euconsent-v2
-            }
-            });
 
             // Imposta la variabile globale adv_consent prima del caricamento framework
             var adv_consent = (function () {
@@ -46,7 +45,7 @@
                 if (!stored) return { consensoDato: false }; // Nessuna scelta ancora
                 return {
                     consensoDato: stored.consensoDato,
-                    tcString: getTcString()
+                    tcString: stored.tcString || getTcString()
                 };
             })();
     
@@ -61,6 +60,10 @@
             cmd: []
         };
         dlApi.cmd.push(function (dlApi) {
+            dlApi.getTCString(function (tcString) {
+                console.log("TCF consent string:", tcString);
+                saveTcStringToStorage(tcString);
+            });
             dlApi.canBePersonalized(function (consent) {
                 console.log("User consent for personalization:", consent);
                 saveConsentToStorage(consent);
