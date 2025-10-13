@@ -15,7 +15,7 @@
             function getTcString() {
                 const value = `; ${document.cookie}`;
                 console.log("Cookie string:", value);
-                const parts = value.split(`; leuconsent=`);
+                const parts = value.split(`; euconsent=`);
                 console.log(parts);
                 if (parts.length === 2) {
                     return parts.pop().split(";").shift();
