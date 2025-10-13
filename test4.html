@@ -12,40 +12,29 @@
                 }
             }
 
-            function getTcString() {
-                const value = `; ${document.cookie}`;
-                console.log("Cookie string:", value);
-                const parts = value.split(`; euconsent=`);
-                console.log(parts);
-                if (parts.length === 2) {
-                    return parts.pop().split(";").shift();
-                }
-                return null; // return null if not found
-            }
-
             function saveConsentToStorage(consented) {
-                const consentData = {
-                    consensoDato: consented
-                };
-                localStorage.setItem("user_consent", JSON.stringify(consentData));
-            }
-            function saveTcStringToStorage(tcString) {
                 const stored = getConsentFromStorage() || {};
-                stored.tcString = tcString;
+                stored.consensoDato = consented;
+                localStorage.setItem("user_consent", JSON.stringify(stored));
+            }
+            function saveTcStringToStorage(consents) {
+                console.log("Saving TC string to storage:", consents);
+                const stored = getConsentFromStorage() || {};
+                stored.tcString = consents.euConsent || '';
+                console.log("Updated stored consent data:", stored);
                 localStorage.setItem("user_consent", JSON.stringify(stored));
             }
             var adv_target = {
                 "pdv_id": "DIMAR_MERCATO_203",
-                "sport": "Football"
+                "sport": "football"
             };
-
             // Imposta la variabile globale adv_consent prima del caricamento framework
             var adv_consent = (function () {
                 const stored = getConsentFromStorage();
-                if (!stored) return { consensoDato: false }; // Nessuna scelta ancora
+                if (!stored) return { consensoDato: false };
                 return {
                     consensoDato: stored.consensoDato,
-                    tcString: stored.tcString || getTcString()
+                    tcString: stored.tcString
                 };
             })();
     
@@ -60,9 +49,9 @@
             cmd: []
         };
         dlApi.cmd.push(function (dlApi) {
-            dlApi.getTCString(function (tcString) {
-                console.log("TCF consent string:", tcString);
-                saveTcStringToStorage(tcString);
+            dlApi.getConsents(function (error, consent) {
+                console.log("User consent for ads:", consent);
+                saveTcStringToStorage(consent);
             });
             dlApi.canBePersonalized(function (consent) {
                 console.log("User consent for personalization:", consent);
